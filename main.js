@@ -9,7 +9,7 @@ puppeteer.use(StealthPlugin());
 
 app.on('ready', async () => {
   try {
-    const browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox'] });
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
     const page = await browser.newPage();
   
     await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'networkidle2' });

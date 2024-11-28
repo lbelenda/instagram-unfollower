@@ -13,7 +13,6 @@ export function generateUsernamesList() {
       return request.string_list_data[0]["value"];
     }).flat();
 
-    console.log("values are", values);
     return values;
   } catch (err) {
     console.error('Error reading or parsing file:', err);
