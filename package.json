@@ -8,9 +8,9 @@
     "start": "electron ."
   },
   "keywords": [],
-  "author": "",
+  "author": "lbelenda <lbelenda@gmail.com>",
   "license": "ISC",
-  "description": "",
+  "description": "remove all those follow requests that had never been accepted (and never ever be) ",
   "dependencies": {
     "electron": "^33.2.0",
     "puppeteer": "^23.9.0",
