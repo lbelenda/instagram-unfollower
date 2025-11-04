@@ -9,7 +9,14 @@ puppeteer.use(StealthPlugin());
 
 app.on('ready', async () => {
   try {
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+    console.log('Validating pending_follow_requests.json...');
+    const usernames = generateUsernamesList();
+    console.log(`Found ${usernames.length} pending follow request(s) to cancel.\n`);
+
+    const showBrowser = readlineSync.keyInYN('Show browser window?');
+    console.log(showBrowser ? 'Browser will be visible' : 'Running in headless mode');
+
+    const browser = await puppeteer.launch({ headless: !showBrowser, args: ['--no-sandbox'] });
     const page = await browser.newPage();
   
     await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'networkidle2' });
@@ -27,7 +34,6 @@ app.on('ready', async () => {
   
     await handleTwoFactorAuthentication(page);
   
-    const usernames = generateUsernamesList();
     for (const username of usernames) {
       await cancelFollowRequest(page, username);
     }
@@ -68,7 +74,7 @@ async function cancelFollowRequest(page, username) {
 
     const requestedButton = await page.locator('text/Requested').setTimeout(500);
     await requestedButton.click();
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await page.waitForSelector('text=Unfollow', { timeout: 5000 });
     await page.locator('text=Unfollow').click();
     console.log(`Follow request cancelled for ${username}`);
 
