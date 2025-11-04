@@ -14,7 +14,7 @@
   "keywords": [],
   "author": "lbelenda <lbelenda@gmail.com>",
   "license": "ISC",
-  "description": "remove all those follow requests that had never been accepted (and never ever be) ",
+  "description": "Automated tool to cancel pending instagram follow requests that will never be accepted.",
   "dependencies": {
     "puppeteer": "^23.9.0",
     "puppeteer-extra": "^3.3.6",
