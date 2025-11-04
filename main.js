@@ -1,4 +1,3 @@
-import { app } from 'electron';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import readlineSync from 'readline-sync';
@@ -7,7 +6,7 @@ import { generateUsernamesList } from './utils.js';
 // Use Puppeteer stealth mode to avoid detection
 puppeteer.use(StealthPlugin());
 
-app.on('ready', async () => {
+async function main() {
   try {
     console.log('Validating pending_follow_requests.json...');
     const usernames = generateUsernamesList();
@@ -41,12 +40,11 @@ app.on('ready', async () => {
     await browser.close();
     console.log('Accounts unfollowed.');
 
-    app.quit();
-
   } catch (error) {
     console.error('Error during automation:', error);
+    process.exit(1);
   }
-});
+}
 
 async function handleTwoFactorAuthentication(page) {
     while(true) {
@@ -84,3 +82,4 @@ async function cancelFollowRequest(page, username) {
     console.log(`No follow request found for ${username}`);
   }
 }
+main();

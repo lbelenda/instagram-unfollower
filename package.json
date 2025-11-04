@@ -5,17 +5,35 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "node main.js",
+    "build": "pkg .",
+    "build:linux": "pkg . --targets node18-linux-x64 --output dist/instagram-unfollower-linux",
+    "build:mac": "pkg . --targets node18-macos-x64 --output dist/instagram-unfollower-macos",
+    "build:win": "pkg . --targets node18-win-x64 --output dist/instagram-unfollower-win.exe"
   },
   "keywords": [],
   "author": "lbelenda <lbelenda@gmail.com>",
   "license": "ISC",
   "description": "remove all those follow requests that had never been accepted (and never ever be) ",
   "dependencies": {
-    "electron": "^33.2.0",
     "puppeteer": "^23.9.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "readline-sync": "^1.4.10"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  },
+  "pkg": {
+    "scripts": "main.js",
+    "assets": [
+      "node_modules/puppeteer-extra-plugin-stealth/**/*"
+    ],
+    "targets": [
+      "node18-linux-x64",
+      "node18-macos-x64",
+      "node18-win-x64"
+    ],
+    "outputPath": "dist"
   }
 }
