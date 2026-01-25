@@ -20,16 +20,51 @@ async function main() {
   
     await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'networkidle2' });
 
-    const username = readlineSync.question('username: ');
-    const password = readlineSync.question('password: ', { hideEchoBack: true });
+    let loginSuccessful = false;
+    let attempts = 0;
+    const maxAttempts = 3;
+    
+    while (!loginSuccessful && attempts < maxAttempts) {
+      attempts++;
+      console.log(attempts > 1 ? `\nAttempt ${attempts} of ${maxAttempts}` : '');
+      
+      const username = readlineSync.question('username: ');
+      const password = readlineSync.question('password: ', { hideEchoBack: true });
 
-    await page.locator('[name="username"]').fill(username);
-    await page.locator('[name="password"]').fill(password);
-    await page.click('[type="submit"]');
-  
-    await page.waitForNavigation({ waitUntil: 'networkidle2' });
-  
-    console.log('Login initiated.');
+      await page.locator('[name="email"]').fill(username);
+      await page.locator('[name="pass"]').fill(password);
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Submit the form by pressing Enter (more reliable than clicking submit button)
+      await page.keyboard.press('Enter');
+      await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 5000 }).catch(() => {});
+      
+      const currentUrl = page.url();
+      
+      if (!currentUrl.includes('/accounts/login/')) {
+        console.log('Login successful.');
+        loginSuccessful = true;
+      } else {
+        console.log('\nLogin failed. Please check your credentials.');
+        
+        if (attempts < maxAttempts) {
+          const retry = readlineSync.keyInYN('Would you like to try again?');
+          
+          if (!retry) {
+            await browser.close();
+            console.log('Login cancelled by user.');
+            process.exit(0);
+          }
+          
+          await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'networkidle2' });
+        } else {
+          await browser.close();
+          console.log(`\nMaximum login attempts (${maxAttempts}) reached. Exiting.`);
+          process.exit(1);
+        }
+      }
+    }
   
     await handleTwoFactorAuthentication(page);
   
